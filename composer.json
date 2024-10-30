@@ -7,16 +7,22 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^2.13",
         "doctrine/orm": "^3.3",
         "symfony/console": "7.1.*",
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
+        "symfony/form": "7.1.*",
         "symfony/framework-bundle": "7.1.*",
         "symfony/runtime": "7.1.*",
+        "symfony/security-bundle": "7.1.*",
         "symfony/stimulus-bundle": "^2.21",
         "symfony/twig-bundle": "7.1.*",
+        "symfony/ux-icons": "*",
         "symfony/ux-live-component": "^2.21",
         "symfony/ux-turbo": "^2.21",
+        "symfony/ux-twig-component": "*",
+        "symfony/validator": "7.1.*",
         "symfony/webpack-encore-bundle": "^2.2",
         "symfony/yaml": "7.1.*"
     },
@@ -66,7 +72,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.1.*"
+            "require": "7.1.*",
+            "docker": true
         }
     }
 }

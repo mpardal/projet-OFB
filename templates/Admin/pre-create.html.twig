@@ -1,0 +1,12 @@
+{% extends 'base_private.html.twig' %}
+
+{% block title %} - pré-création d'un administrateur{% endblock %}
+
+{% block body %}
+    <h1>Pré-inscription</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.email) }}
+    <button type="submit">Envoyer</button>
+    {{ form_end(form) }}
+{% endblock %}

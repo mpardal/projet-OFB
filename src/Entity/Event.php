@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Event
@@ -21,26 +23,61 @@ class Event
     #[ORM\Column(type: 'text')]
     public string $description;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    public string $address;
+
+    #[ORM\Column(type: 'string', length: 5)]
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/^\d{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
+    public string $zipCode;
+
+    #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
+    public string $city;
+
     #[ORM\Column(type: 'datetime')]
     public \DateTimeInterface $startDate;
 
     #[ORM\Column(type: 'datetime')]
     public \DateTimeInterface $endDate;
 
-    #[ORM\ManyToMany(targetEntity: ExhibitorGroup::class, inversedBy: 'events')]
-    #[ORM\JoinTable(name: 'event_exhibitor_group')]
-    public iterable $exhibitorGroups;  // Les groupes d'exposants participant à cet événement
+    #[ORM\OneToMany(targetEntity: ExhibitorGroup::class, mappedBy: 'event')]
+    private Collection $exhibitorGroups;
+
+    #[ORM\Column(type: 'text')]
+    public string $urlTickets;
 
     public function __construct()
     {
         $this->exhibitorGroups = new ArrayCollection();
     }
 
-    public function addExhibitorGroup(ExhibitorGroup $group): void
+    public function getExhibitorGroups(): Collection
     {
-        if (!$this->exhibitorGroups->contains($group)) {
-            $this->exhibitorGroups[] = $group;
+        return $this->exhibitorGroups;
+    }
+
+    public function addExhibitorGroup(ExhibitorGroup $exhibitorGroup): self
+    {
+        if (!$this->exhibitorGroups->contains($exhibitorGroup)) {
+            $this->exhibitorGroups->add($exhibitorGroup);
+            $exhibitorGroup->setEvent($this);
         }
+
+        return $this;
+    }
+
+    public function removeExhibitorGroup(ExhibitorGroup $exhibitorGroup): self
+    {
+        if ($this->exhibitorGroups->contains($exhibitorGroup)) {
+            $this->exhibitorGroups->removeElement($exhibitorGroup);
+            $exhibitorGroup->setEvent(null);
+        }
+
+        return $this;
     }
 
     public function getTitle(): string
@@ -91,14 +128,14 @@ class Event
         return $this;
     }
 
-    public function getExhibitorGroups(): iterable
+    public function getUrlTickets(): string
     {
-        return $this->exhibitorGroups;
+        return $this->urlTickets;
     }
 
-    public function setExhibitorGroups(iterable $exhibitorGroups): Event
+    public function setUrlTickets(string $urlTickets): Event
     {
-        $this->exhibitorGroups = $exhibitorGroups;
+        $this->urlTickets = $urlTickets;
 
         return $this;
     }

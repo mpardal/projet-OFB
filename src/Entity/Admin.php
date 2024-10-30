@@ -1,21 +1,20 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ExhibitorRepository;
+use App\Repository\AdminRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ExhibitorRepository::class)]
-class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
+#[ORM\Entity(repositoryClass: AdminRepository::class)]
+class Admin implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     public readonly int $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
@@ -24,7 +23,7 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     #[ORM\Column(type: 'json')]
-    private array $roles = ['ROLE_EXHIBITOR'];
+    private array $roles = ['ROLE_ADMIN'];
 
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
@@ -49,9 +48,10 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $archived = false;
 
-    #[ORM\ManyToOne(targetEntity: ExhibitorGroup::class, inversedBy: 'exhibitors')]
-    #[ORM\JoinColumn(nullable: false)]
-    public ExhibitorGroup $exhibitorGroup;
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
     public function getEmail(): string
     {
@@ -87,7 +87,8 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setRoles(array $roles): self
     {
-        $this->roles = ['ROLE_EXHIBITOR'];
+        // Forcer les rôles à ne contenir que 'ROLE_ADMIN'
+        $this->roles = ['ROLE_ADMIN'];
 
         return $this;
     }
@@ -103,7 +104,6 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -131,6 +131,11 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFullName(): string
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
+
     public function isArchived(): bool
     {
         return $this->archived;
@@ -139,18 +144,6 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
     public function setArchived(bool $archived): self
     {
         $this->archived = $archived;
-
-        return $this;
-    }
-
-    public function getExhibitorGroup(): ExhibitorGroup
-    {
-        return $this->exhibitorGroup;
-    }
-
-    public function setExhibitorGroup(ExhibitorGroup $exhibitorGroup): Exhibitor
-    {
-        $this->exhibitorGroup = $exhibitorGroup;
 
         return $this;
     }

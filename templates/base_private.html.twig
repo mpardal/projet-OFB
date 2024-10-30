@@ -41,28 +41,18 @@
             <!-- Menu principal -->
             <ul id="menu" class="hidden lg:flex lg:space-x-2 flex-col lg:flex-row space-y-2 lg:space-y-0 absolute lg:static top-16 left-0 w-full lg:w-auto bg-white lg:bg-transparent p-4 lg:p-0 shadow lg:shadow-none z-50">
                 <li>
-                    <a href="{{ path('app_page_concept') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Le concept
+                    <a href="{{ path('app_admin_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
+                        Gestion des administrateurs
                     </a>
                 </li>
                 <li>
-                    <a href="{{ path('app_page_competition') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Les concours ludiques
+                    <a href="{{ path('app_exhibitors_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
+                        Gestion des exposants
                     </a>
                 </li>
                 <li>
-                    <a href="{{ path('app_page_exercise') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Les cours & séances
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_page_exhibitor') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Les exposants
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_page_team') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        L'équipe "Ouest Fitness Body"
+                    <a href="{{ path('app_exhibitor_group_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
+                        Gestion des groupes d'exposants
                     </a>
                 </li>
                 {% if app.user %}
@@ -72,16 +62,6 @@
                         </a>
                     </li>
                 {% else %}
-                    <li>
-                        <a href="{{ path('home_private') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                            Test
-                            {#{% if is_granted('ROLE_ADMIN') %}
-                                Accès exposant
-                            {% elseif is_granted('ROLE_ADMIN') %}
-                                Accès privé
-                            {% endif %}#}
-                        </a>
-                    </li>
                     <li>
                         <a href="{{ path('login') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
                             Connexion

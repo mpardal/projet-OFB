@@ -1,0 +1,11 @@
+{% extends 'base_private.html.twig' %}
+
+{% block title %} - pré-création d'un group d'exposants{% endblock %}
+
+{% block body %}
+    <h1>Pré-inscription</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.groupName) }}
+    {{ form_end(form) }}
+{% endblock %}

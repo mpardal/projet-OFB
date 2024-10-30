@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class ExhibitorGroup
@@ -17,28 +20,43 @@ class ExhibitorGroup
     #[ORM\Column(length: 255)]
     public string $groupName;
 
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'exhibitorGroups')]
-    public iterable $events;  // Les événements auxquels ce groupe participe
+    #[ORM\Column(type: 'text')]
+    public string $description;
 
-    #[ORM\OneToMany(mappedBy: 'exhibitorGroup', targetEntity: Exhibitor::class)]
+    #[ORM\Column(type: 'text', length: 255, nullable: true)]
+    public ?string $website = null;
+
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+    #[Assert\Email(message: 'Veuillez fournir un email valide.')]
+    private string $emailContact;
+
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'exhibitorGroups')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Event $event = null;
+
+    #[ORM\OneToMany(targetEntity: Exhibitor::class, mappedBy: 'exhibitorGroup')]
     public iterable $exhibitors;  // Les exposants appartenant à ce groupe
 
-    #[ORM\OneToMany(mappedBy: 'exhibitorGroup', targetEntity: User::class)]
-    public iterable $users;  // Les utilisateurs (exposants) associés à ce groupe
+    #[ORM\OneToMany(targetEntity: Attachments::class, mappedBy: 'exhibitorGroup')]
+    public iterable $attachments;  // Les utilisateurs (exposants) associés à ce groupe
 
     public function __construct()
     {
-        $this->events = new ArrayCollection();
         $this->exhibitors = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
     }
 
-    public function addEvent(Event $event): void
+    public function getEvent(): ?Event
     {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->addExhibitorGroup($this);
-        }
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
     }
 
     public function getGroupName(): string
@@ -53,14 +71,38 @@ class ExhibitorGroup
         return $this;
     }
 
-    public function getEvents(): iterable
+    public function getDescription(): string
     {
-        return $this->events;
+        return $this->description;
     }
 
-    public function setEvents(iterable $events): ExhibitorGroup
+    public function setDescription(string $description): ExhibitorGroup
     {
-        $this->events = $events;
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): ExhibitorGroup
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getEmailContact(): string
+    {
+        return $this->emailContact;
+    }
+
+    public function setEmailContact(string $emailContact): ExhibitorGroup
+    {
+        $this->emailContact = $emailContact;
 
         return $this;
     }
@@ -77,15 +119,26 @@ class ExhibitorGroup
         return $this;
     }
 
-    public function getUsers(): iterable
+    public function getAttachments(): Collection
     {
-        return $this->users;
+        return $this->attachments;
     }
 
-    public function setUsers(iterable $users): ExhibitorGroup
+    public function addAttachment(Attachments $attachment): void
     {
-        $this->users = $users;
+        if (!$this->attachments->contains($attachment)) {
+            $this->attachments->add($attachment);
+            $attachment->setExhibitorGroup($this);
+        }
+    }
 
-        return $this;
+    public function removeAttachment(Attachments $attachment): void
+    {
+        if ($this->attachments->contains($attachment)) {
+            $this->attachments->removeElement($attachment);
+            if ($attachment->getExhibitorGroup() === $this) {
+                $attachment->setExhibitorGroup(null);
+            }
+        }
     }
 }
