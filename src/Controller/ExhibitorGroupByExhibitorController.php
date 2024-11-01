@@ -35,7 +35,7 @@ class ExhibitorGroupByExhibitorController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'L\'utilisateur ' . $exhibitor->getFullName() . ' a bien été modifié');
+            $this->addFlash('success', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été modifié');
             return $this->redirectToRoute('app_exhibitor_group_index');
         }
         return $this->render('exhibitorGroup/edit.html.twig', [

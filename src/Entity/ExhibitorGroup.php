@@ -31,6 +31,9 @@ class ExhibitorGroup
     #[Assert\Email(message: 'Veuillez fournir un email valide.')]
     private string $emailContact;
 
+    #[ORM\Column(type: 'boolean')]
+    public bool $archived = false;
+
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'exhibitorGroups')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
@@ -45,6 +48,11 @@ class ExhibitorGroup
     {
         $this->exhibitors = new ArrayCollection();
         $this->attachments = new ArrayCollection();
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     public function getEvent(): ?Event
@@ -103,6 +111,18 @@ class ExhibitorGroup
     public function setEmailContact(string $emailContact): ExhibitorGroup
     {
         $this->emailContact = $emailContact;
+
+        return $this;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): ExhibitorGroup
+    {
+        $this->archived = $archived;
 
         return $this;
     }

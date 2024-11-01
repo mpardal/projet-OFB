@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Admin;
 use App\Validator\UniqueEmail;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -42,6 +43,13 @@ class AdminType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults([
+            'data_class' => Admin::class,
+        ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'admin';
     }
 }

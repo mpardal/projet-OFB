@@ -66,4 +66,9 @@ class ExhibitorGroupType extends AbstractType
             'data_class' => ExhibitorGroup::class,
         ]);
     }
+
+    public function getBlockPrefix(): string
+    {
+        return 'exhibitor_group';
+    }
 }

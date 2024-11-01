@@ -6,6 +6,9 @@ use App\Entity\ExhibitorGroup;
 use App\Entity\Admin;
 use App\Form\EmailVerificationType;
 use App\Form\AdminType;
+use App\Form\ExhibitorGroupType;
+use App\Form\ExhibitorType;
+use App\Form\GroupNameVerificationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,34 +28,39 @@ class ExhibitorGroupController extends AbstractController
     #[Route('/', name:'app_exhibitor_group_index')]
     public function index(): Response
     {
-        $exhibitors = $this->entityManager->getRepository(ExhibitorGroup::class)->findBy(
-            ['roles' => 'ROLE_ADMIN']
-        );
+        $exhibitorsGroup = $this->entityManager->getRepository(ExhibitorGroup::class)->findAll();
 
         return $this->render('exhibitorGroup/index.html.twig', [
-            'exhibitors' => $exhibitors
+            'exhibitorsGroup' => $exhibitorsGroup
         ]);
     }
 
     #[Route('/{id}/pre_creation', name:'app_exhibitor_group_pre_create')]
     public function preCreate(Request $request): Response
     {
-        $form = $this->createForm(EmailVerificationType::class);
+        $form = $this->createForm(GroupNameVerificationType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->entityManager;
-            $exhibitor = new Admin();
-            $exhibitor->setEmail($form->get('email')->getData());
-            $exhibitor->setRoles(['ROLE_ADMIN']);
 
-            $entityManager->persist($exhibitor);
+            $exhibitorGroupExist = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy(
+                ['groupName' => $form->get('groupName')->getData()]
+            );
+
+            if (null !== $exhibitorGroupExist) {
+                $this->addFlash('danger', 'Le stand ' . $exhibitorGroupExist->getGroupName() . ' existe deja');
+                return $this->redirectToRoute('app_exhibitor_group_pre_create');
+            }
+
+            $exhibitorGroup = new ExhibitorGroup();
+            $exhibitorGroup->setGroupName($form->get('groupName')->getData());
+
+            $entityManager->persist($exhibitorGroup);
             $entityManager->flush();
 
-            //$session->set('user', $exhibitor);
-
             return $this->redirectToRoute('app_exhibitor_group_create', [
-                'id' => $exhibitor->getId()
+                'id' => $exhibitorGroup->getId()
             ]);
         }
         return $this->render('exhibitorGroup/pre-create.html.twig', [
@@ -64,14 +72,14 @@ class ExhibitorGroupController extends AbstractController
     public function create($id, Request $request): Response
     {
         $entityManager = $this->entityManager;
-        $exhibitor = $entityManager->getRepository(Admin::class)->find($id);
-        $form = $this->createForm(AdminType::class, $exhibitor);
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
+        $form = $this->createForm(ExhibitorGroupType::class, $exhibitorGroup);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'utilisateur ' . $exhibitor->getFullName() . ' a bien été créé');
+            $this->addFlash('success', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été créé');
             return $this->redirectToRoute('app_exhibitor_group_index');
         }
 
@@ -84,15 +92,15 @@ class ExhibitorGroupController extends AbstractController
     public function edit($id, Request $request): Response
     {
         $entityManager = $this->entityManager;
-        $exhibitor = $entityManager->getRepository(Admin::class)->find($id);
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
 
-        $form = $this->createForm(AdminType::class, $exhibitor);
+        $form = $this->createForm(ExhibitorGroupType::class, $exhibitorGroup);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'L\'utilisateur ' . $exhibitor->getFullName() . ' a bien été modifié');
+            $this->addFlash('success', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été modifié');
             return $this->redirectToRoute('app_exhibitor_group_index');
         }
         return $this->render('exhibitorGroup/edit.html.twig', [
@@ -104,13 +112,13 @@ class ExhibitorGroupController extends AbstractController
     public function delete($id): Response
     {
         $entityManager = $this->entityManager;
-        $exhibitor = $entityManager->getRepository(Admin::class)->find($id);
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
 
-        $exhibitor->setArchived(true);
+        $exhibitorGroup->setArchived(true);
 
         $entityManager->flush();
 
-        $this->addFlash('warning', 'L\'utilisateur ' . $exhibitor->getFullName() . ' a bien été archivé');
+        $this->addFlash('warning', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été archivé');
 
         return $this->redirectToRoute('app_exhibitor_group_index');
     }

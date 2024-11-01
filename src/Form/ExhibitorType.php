@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Exhibitor;
 use App\Entity\ExhibitorGroup;
 use App\Validator\UniqueEmail;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -51,6 +52,13 @@ class ExhibitorType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults([
+            'data_class' => Exhibitor::class,
+        ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'exhibitor';
     }
 }

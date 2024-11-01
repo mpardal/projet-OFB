@@ -85,4 +85,9 @@ class EventType extends AbstractType
             'data_class' => Event::class,
         ]);
     }
+
+    public function getBlockPrefix(): string
+    {
+        return 'event';
+    }
 }

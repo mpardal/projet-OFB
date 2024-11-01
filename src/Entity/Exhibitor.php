@@ -58,10 +58,20 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
     public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 
     /**

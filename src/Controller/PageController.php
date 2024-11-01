@@ -2,12 +2,21 @@
 
 namespace App\Controller;
 
+use App\Entity\Exhibitor;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class PageController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     #[Route('/concept', name: 'app_page_concept')]
     public function concept(): Response
     {
@@ -17,6 +26,7 @@ class PageController extends AbstractController
     #[Route('/presentation_exposants', name: 'app_page_exhibitor')]
     public function exhibitor(): Response
     {
+        $exhibitors = $this->entityManager->getRepository(Exhibitor::class)->findAll();
         return $this->render('pages/exhibitors.html.twig');
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\ExhibitorGroup;
 use App\Validator\UniqueEmail;
+use Doctrine\DBAL\Types\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -11,17 +13,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-class EmailVerificationType extends AbstractType
+class GroupNameVerificationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
+            ->add('groupName', TextType::class, [
+                'label' => 'Rentrer le nom du groupe d\'exposants',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Email(),
-                    new UniqueEmail(), // Contrainte personnalisée pour vérifier l'unicité
                 ],
             ])
             ->add('submit', SubmitType::class, [
@@ -36,6 +36,6 @@ class EmailVerificationType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'email_verification';
+        return 'group_name_verification';
     }
 }

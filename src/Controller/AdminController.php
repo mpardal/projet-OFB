@@ -25,7 +25,13 @@ class AdminController extends AbstractController
     public function index(): Response
     {
         $admins = $this->entityManager->getRepository(Admin::class)->findBy(
-            ['roles' => 'ROLE_ADMIN']
+            [
+                'roles' => 'ROLE_ADMIN',
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
         );
 
         return $this->render('admin/index.html.twig', [
@@ -47,8 +53,6 @@ class AdminController extends AbstractController
 
             $entityManager->persist($admin);
             $entityManager->flush();
-
-            //$session->set('user', $admin);
 
             return $this->redirectToRoute('app_admin_create', [
                 'id' => $admin->getId()

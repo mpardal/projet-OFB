@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Admin;
+use App\Entity\Exhibitor;
 use App\Form\EmailVerificationType;
 use App\Form\AdminType;
+use App\Form\ExhibitorType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,8 +26,14 @@ class ExhibitorsController extends AbstractController
     #[Route('/', name:'app_exhibitors_index')]
     public function index(): Response
     {
-        $exhibitors = $this->entityManager->getRepository(Admin::class)->findBy(
-            ['roles' => 'ROLE_ADMIN']
+        $exhibitors = $this->entityManager->getRepository(Exhibitor::class)->findBy(
+            [
+                'roles' => 'ROLE_EXHIBITOR',
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
         );
 
         return $this->render('exhibitor/index.html.twig', [
@@ -41,14 +49,12 @@ class ExhibitorsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->entityManager;
-            $exhibitor = new Admin();
+            $exhibitor = new Exhibitor();
             $exhibitor->setEmail($form->get('email')->getData());
-            $exhibitor->setRoles(['ROLE_ADMIN']);
+            $exhibitor->setRoles(['ROLE_EXHIBITOR']);
 
             $entityManager->persist($exhibitor);
             $entityManager->flush();
-
-            //$session->set('user', $exhibitor);
 
             return $this->redirectToRoute('app_exhibitors_create', [
                 'id' => $exhibitor->getId()
@@ -63,8 +69,8 @@ class ExhibitorsController extends AbstractController
     public function create($id, Request $request): Response
     {
         $entityManager = $this->entityManager;
-        $exhibitor = $entityManager->getRepository(Admin::class)->find($id);
-        $form = $this->createForm(AdminType::class, $exhibitor);
+        $exhibitor = $entityManager->getRepository(Exhibitor::class)->find($id);
+        $form = $this->createForm(ExhibitorType::class, $exhibitor);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -83,9 +89,9 @@ class ExhibitorsController extends AbstractController
     public function edit($id, Request $request): Response
     {
         $entityManager = $this->entityManager;
-        $exhibitor = $entityManager->getRepository(Admin::class)->find($id);
+        $exhibitor = $entityManager->getRepository(Exhibitor::class)->find($id);
 
-        $form = $this->createForm(AdminType::class, $exhibitor);
+        $form = $this->createForm(ExhibitorType::class, $exhibitor);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -103,7 +109,7 @@ class ExhibitorsController extends AbstractController
     public function delete($id): Response
     {
         $entityManager = $this->entityManager;
-        $exhibitor = $entityManager->getRepository(Admin::class)->find($id);
+        $exhibitor = $entityManager->getRepository(Exhibitor::class)->find($id);
 
         $exhibitor->setArchived(true);
 
