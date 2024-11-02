@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Billetterie{% endblock %}
+
+{% block body %}
+    {% for event in events %}
+    <h1 class="text-2xl font-bold mb-6">Billetterie de l'événement : {{ event.name }}</h1>
+    <iframe
+            src='https://widget.weezevent.com/ticket/.{{ event.weezEventId }}'
+            width='90%'
+            height='100%'
+            allowfullscreen>
+    </iframe>
+        {% else %}
+        <h1 class="text-2xl font-bold mb-6">La billetterie n'est pas ouverte pour l'événement : {{ event.name }}</h1>
+    {% endfor %}
+{% endblock %}

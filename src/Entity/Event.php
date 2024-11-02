@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
 {
     #[ORM\Id]
@@ -47,8 +48,11 @@ class Event
     #[ORM\OneToMany(targetEntity: ExhibitorGroup::class, mappedBy: 'event')]
     private Collection $exhibitorGroups;
 
-    #[ORM\Column(type: 'text')]
-    public string $urlTickets;
+    #[ORM\Column(type: 'integer')]
+    public int $weezEventId;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $archived = false;
 
     public function __construct()
     {
@@ -128,14 +132,26 @@ class Event
         return $this;
     }
 
-    public function getUrlTickets(): string
+    public function getWeezeventId(): int
     {
-        return $this->urlTickets;
+        return $this->weezEventId;
     }
 
-    public function setUrlTickets(string $urlTickets): Event
+    public function setWeezeventId(int $weezEventId): Event
     {
-        $this->urlTickets = $urlTickets;
+        $this->weezEventId = $weezEventId;
+
+        return $this;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): self
+    {
+        $this->archived = $archived;
 
         return $this;
     }

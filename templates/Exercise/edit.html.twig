@@ -1,0 +1,35 @@
+{% extends 'base_private.html.twig' %}
+
+{% block title %} - Modification d'un cours ou d'une nouvelle séance{% endblock %}
+
+{% block body %}
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Modification du cours/de la séance : {{ exercise.title }}</h1>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+        <div>
+            {{ form_label(form.title, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.title, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.texte, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.texte, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.texte, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.image, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.image, {'attr': {'class': 'mt-1 block w-full text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.image, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div class="text-center">
+            {{ form_widget(form.submit, {'attr': {'class': 'inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'}}) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

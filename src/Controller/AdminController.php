@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin')]
@@ -21,6 +20,7 @@ class AdminController extends AbstractController
     {
         $this->entityManager = $entityManager;
     }
+
     #[Route('/', name:'app_admin_index')]
     public function index(): Response
     {
@@ -79,7 +79,8 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/create.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'admin' => $admin
         ]);
     }
 
@@ -100,7 +101,8 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'admin' => $admin
         ]);
     }
 

@@ -3,33 +3,33 @@
 {% block title %} - Gestion des exposants{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto p-4" data-controller="search">
         <h1 class="text-2xl font-bold mb-6">Liste des exposants</h1>
 
         <div class="overflow-x-auto shadow-md rounded-lg">
             <table class="min-w-full bg-white border border-gray-200">
                 <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
-                    <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                    <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom et Prénom</th>
                     <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                     <th class="py-3 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                {#{% for admin in admins %}
-                    <tr class="hover:bg-gray-100">
-                        <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ admin.name }}</td>
-                        <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ admin.email }}</td>
+                {% for exhibitor in exhibitors %}
+                    <tr class="hover:bg-gray-100" data-search-target="rows" data-name="{{ exhibitor.fullName }}">
+                        <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ exhibitor.fullName }}</td>
+                        <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ exhibitor.email }}</td>
                         <td class="py-4 px-6 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="{{ path('app_admin_edit', { id: admin.id }) }}" class="text-blue-600 hover:text-blue-900">Éditer</a>
-                            <a href="{{ path('app_admin_delete', { id: admin.id }) }}" class="text-red-600 hover:text-red-900 ml-4">Supprimer</a>
+                            <a href="{{ path('app_exhibitors_edit', { id: exhibitor.id }) }}" class="text-blue-600 hover:text-blue-900">Éditer</a>
+                            <a href="{{ path('app_exhibitors_delete', { id: exhibitor.id }) }}" class="text-red-600 hover:text-red-900 ml-4">Supprimer</a>
                         </td>
                     </tr>
-                {% else %}#}
+                {% else %}
                 <tr>
-                    <td colspan="5" class="py-4 px-6 text-center text-sm text-gray-500">Aucun utilisateur trouvé.</td>
+                    <td colspan="5" class="py-4 px-6 text-center text-sm text-gray-500">Aucun exposant trouvé.</td>
                 </tr>
-                {#{% endfor %}#}
+                {% endfor %}
                 </tbody>
             </table>
         </div>

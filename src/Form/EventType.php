@@ -71,11 +71,9 @@ class EventType extends AbstractType
                     new NotBlank(),
                 ],
             ])
-            ->add('urlTickets', TextareaType::class, [
-                'label' => 'URL des billets',
-                'constraints' => [
-                    new NotBlank(),
-                ],
+            ->add('weezEventId', TextareaType::class, [
+                'label' => 'référence de l\événement sur weezEvent',
+                'required' => false,
             ]);
     }
 

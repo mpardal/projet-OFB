@@ -1,7 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} - Le concept{% endblock %}
+{% block title %} - Les exposants{% endblock %}
 
 {% block body %}
-    PAGE DES EXPOSANTS
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {% for group in exhibitorGroups %}
+            <a href="{{ path('group_show', { id: group.id }) }}" class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="h-48 bg-gray-200">
+                    {% set firstImage = group.attachments|filter(a => a.type == 'image')|first %}
+                    {% if firstImage %}
+                        <img src="{{ asset(firstImage.filePath) }}" alt="{{ group.groupName }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="flex items-center justify-center h-full text-gray-400">Pas d'image</div>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h2 class="text-xl font-bold">{{ group.groupName }}</h2>
+                    <p class="text-gray-600">Voir les détails</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
 {% endblock %}

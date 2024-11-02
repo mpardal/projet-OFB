@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Admin;
 use App\Entity\Exhibitor;
 use App\Form\EmailVerificationType;
-use App\Form\AdminType;
+
 use App\Form\ExhibitorType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

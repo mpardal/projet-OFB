@@ -14,5 +14,6 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
     .enablePostCssLoader() // Ajout du PostCSS Loader pour TailwindCSS
+    .enableTypeScriptLoader()
 
 module.exports = Encore.getWebpackConfig();

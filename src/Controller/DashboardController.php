@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\DashboardArticle;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,11 +11,24 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     #[Route('/', name: 'home_public')]
     public function index(): Response
     {
-        return $this->render('Pages/dashboard.html.twig');
+        $articles = $this->entityManager->getRepository(DashboardArticle::class)->findBy(
+            ['archived' => false],
+            ['id' => 'DESC']
+        );
+
+        return $this->render('Pages/dashboard.html.twig', [
+            'articles' => $articles
+        ]);
     }
 
     #[Route('/home-private', name: 'home_private')]

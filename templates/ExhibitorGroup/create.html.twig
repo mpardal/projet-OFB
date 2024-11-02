@@ -1,7 +1,47 @@
 {% extends 'base_private.html.twig' %}
 
-{% block title %} - création d'un group d'exposants{% endblock %}
+{% block title %} - Création d'un nouveau groupe d'exposants{% endblock %}
 
 {% block body %}
-CRÉATION D'UN GROUPE D'EXPOSANTS
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Création d'un nouveau groupe d'exposants</h1>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+        <div>
+            {{ form_label(form.groupName, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.groupName, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.groupName, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.description, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.description, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.website, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.website, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.website, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.emailContact, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.emailContact, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.emailContact, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.event, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.event, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+            {{ form_errors(form.event, {'attr': {'class': 'text-red-600 text-sm'}}) }}
+        </div>
+
+        <div class="text-center">
+            {{ form_widget(form.submit, {'attr': {'class': 'inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'}}) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

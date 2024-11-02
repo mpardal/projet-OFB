@@ -3,14 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\ExhibitorGroup;
-use App\Entity\Admin;
-use App\Form\EmailVerificationType;
-use App\Form\AdminType;
 use App\Form\ExhibitorGroupType;
-use App\Form\ExhibitorType;
 use App\Form\GroupNameVerificationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -49,7 +46,7 @@ class ExhibitorGroupController extends AbstractController
             );
 
             if (null !== $exhibitorGroupExist) {
-                $this->addFlash('danger', 'Le stand ' . $exhibitorGroupExist->getGroupName() . ' existe deja');
+                $this->addFlash('danger', 'Le groupe ' . $exhibitorGroupExist->getGroupName() . ' existe deja');
                 return $this->redirectToRoute('app_exhibitor_group_pre_create');
             }
 
@@ -79,12 +76,13 @@ class ExhibitorGroupController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $this->addFlash('success', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été créé');
+            $this->addFlash('success', 'Le groupe ' . $exhibitorGroup->getGroupName() . ' a bien été créé');
             return $this->redirectToRoute('app_exhibitor_group_index');
         }
 
         return $this->render('exhibitorGroup/create.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'exhibitorGroup' => $exhibitorGroup
         ]);
     }
 
@@ -100,11 +98,12 @@ class ExhibitorGroupController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été modifié');
+            $this->addFlash('success', 'Le groupe ' . $exhibitorGroup->getGroupName() . ' a bien été modifié');
             return $this->redirectToRoute('app_exhibitor_group_index');
         }
         return $this->render('exhibitorGroup/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'exhibitorGroup' => $exhibitorGroup
         ]);
     }
 
@@ -118,9 +117,34 @@ class ExhibitorGroupController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash('warning', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été archivé');
+        $this->addFlash('warning', 'Le groupe ' . $exhibitorGroup->getGroupName() . ' a bien été archivé');
 
         return $this->redirectToRoute('app_exhibitor_group_index');
+    }
+
+    #[Route('/group-details/{id}', name: 'group_details', methods: ['GET'])]
+    public function groupDetails(int $id): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(ExhibitorGroup::class)->find($id);
+        $images = [];
+        $video = null;
+
+        foreach ($group->getAttachments() as $attachment) {
+            if ($attachment->getType() === 'image') {
+                $images[] = $this->getParameter('uploads_directory') . '/' . $attachment->getFilePath();
+            } elseif ($attachment->getType() === 'video') {
+                $video = $this->getParameter('uploads_directory') . '/' . $attachment->getFilePath();
+            }
+        }
+
+        return new JsonResponse([
+            'groupName' => $group->getGroupName(),
+            'description' => $group->getDescription(),
+            'website' => $group->getWebsite(),
+            'emailContact' => $group->getEmailContact(),
+            'images' => $images,
+            'video' => $video,
+        ]);
     }
 
 }

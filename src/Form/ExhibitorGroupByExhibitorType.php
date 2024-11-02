@@ -15,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 class ExhibitorGroupByExhibitorType extends AbstractType
@@ -24,6 +26,7 @@ class ExhibitorGroupByExhibitorType extends AbstractType
         $builder
             ->add('groupName', TextType::class, [
                 'label' => 'Nom du stand',
+                'disabled' => true,
             ])
             ->add('website', TextType::class, [
                 'label' => 'Site internet',
@@ -32,10 +35,9 @@ class ExhibitorGroupByExhibitorType extends AbstractType
             ->add('emailContact', EmailType::class, [
                 'label' => 'Email de contact',
                 'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Email(),
-                    new UniqueEmail(),
-                ]
+                    new NotBlank(message: 'L\'email est obligatoire.'),
+                    new Email(message: 'Veuillez fournir un email valide.'),
+                ],
             ])
             ->add('description', TextType::class, [
                 'label' => 'Présentation de votre stand',
@@ -52,10 +54,14 @@ class ExhibitorGroupByExhibitorType extends AbstractType
                 'required' => false,
             ])
             ->add('event', EntityType::class, [
+                'label' => 'Événement',
                 'class' => Event::class,
-                'choice_label' => 'name',
-                'placeholder' => 'Select an Event',
-                'required' => true,
+                'choice_label' => 'title', // Assuming 'title' is a field in the Event entity
+                'placeholder' => 'Sélectionnez un événement',
+                'disabled' => true,
+                'constraints' => [
+                    new NotBlank(),
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Enregistrer',

@@ -4,28 +4,24 @@
 
 {% block body %}
     <img src="{{ asset('uploads/OFB2025.jpg') }}" alt="image OFB" class="brightness-75">
-    <section class="flex items-center justify-between gap-4 my-4">
-        <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
-            <h3 class="text-center">Premier salon & festival fitness de l'ouest</h3>
-        </article>
-        <img src="{{ asset('uploads/salon-fitness.jpg') }}" alt="salon" class="w-1/2 h-auto object-cover rounded-lg">
-    </section>
-    <section class="flex items-center justify-between gap-4 my-4">
-        <img src="{{ asset('uploads/cours1.jpg') }}" alt="cours" class="w-1/2 h-auto object-cover rounded-lg">
-        <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
-            <h3 class="text-center">Profitez des cours & séances</h3>
-        </article>
-    </section>
-    <section class="flex items-center justify-between gap-4 my-4">
-        <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
-            <h3 class="text-center">Participez aux concours ludiques</h3>
-        </article>
-        <img src="{{ asset('uploads/podium.jpg') }}" alt="concours" class="w-1/2 h-auto object-cover rounded-lg">
-    </section>
-    <section class="flex items-center justify-between gap-4 my-4">
-        <img src="{{ asset('uploads/coach.jpg') }}" alt="coach" class="w-1/2 h-auto object-cover rounded-lg">
-        <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
-            <h3 class="text-center">Rencontrez les meilleurs coachs sportifs</h3>
-        </article>
-    </section>
+
+    {% for article in articles %}
+        {% if loop.index is odd %}
+            <section class="flex items-center justify-between gap-4 my-4">
+            <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
+                <div class="col-left">{{ article.title }}</div>
+                <div class="col-left">{{ article.description }}</div>
+            </article>
+            <img src="{{ asset('uploads/salon-fitness.jpg') }}" alt="salon" class="w-1/2 h-auto object-cover rounded-lg">
+            </section>
+        {% else %}
+            <section class="flex items-center justify-between gap-4 my-4">
+                <img src="{{ asset('uploads/cours1.jpg') }}" alt="cours" class="w-1/2 h-auto object-cover rounded-lg">
+                <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
+                    <div class="col-left">{{ article.title }}</div>
+                    <div class="col-left">{{ article.description }}</div>
+                </article>
+            </section>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

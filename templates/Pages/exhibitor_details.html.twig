@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - {{ exhibitorGroup.groupName }} - Détails{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-4">{{ exhibitorGroup.groupName }}</h1>
+        <p class="text-gray-700 mb-4">{{ exhibitorGroup.description }}</p>
+
+        {% if group.website %}
+            <p class="text-indigo-600"><a href="{{ exhibitorGroup.website }}" target="_blank" class="hover:underline">Visiter le site web</a></p>
+        {% endif %}
+
+        <p class="text-gray-500 mb-4">Contact : {{ exhibitorGroup.emailContact }}</p>
+
+        {# Carrousel d'images #}
+        {% if images is not empty %}
+            <div id="carousel" class="relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden">
+                {% for image in images %}
+                    <img src="{{ asset(image.filePath) }}" alt="" class="w-full h-full object-cover carousel-image" style="display: {{ loop.first ? 'block' : 'none' }}">
+                {% endfor %}
+                <button onclick="prevSlide()" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white rounded-full p-2">‹</button>
+                <button onclick="nextSlide()" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white rounded-full p-2">›</button>
+            </div>
+        {% else %}
+            <p class="text-gray-500">Pas d'images disponibles pour ce groupe.</p>
+        {% endif %}
+
+        {# Vidéo #}
+        {% if video %}
+            <div class="mt-6">
+                <h2 class="text-xl font-semibold mb-2">Vidéo de présentation</h2>
+                <video controls src="{{ asset(video.filePath) }}" class="w-full rounded-lg"></video>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        // JavaScript pour gérer le carrousel d'images
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-image');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.display = i === index ? 'block' : 'none';
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        // Initialiser le carrousel
+        showSlide(currentSlide);
+    </script>
+{% endblock %}

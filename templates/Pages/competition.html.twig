@@ -3,5 +3,21 @@
 {% block title %} - Les concours ludiques{% endblock %}
 
 {% block body %}
-    PAGE CONCOURS LUDIQUE
+    {% for competition in competitions %}
+        {% if loop.index is odd %}
+            <!-- Texte à gauche, image à droite -->
+            <div class="row">
+                <div class="col-left">{{ competition.title }}</div>
+                <div class="col-left">{{ competition.description }}</div>
+                <div class="col-right"><img src="{{ competition.image }}" alt="Image"></div>
+            </div>
+        {% else %}
+            <!-- Image à gauche, texte à droite -->
+            <div class="row">
+                <div class="col-left"><img src="{{ competition.image }}" alt="Image"></div>
+                <div class="col-right">{{ competition.title }}</div>
+                <div class="col-right">{{ competition.description }}</div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
