@@ -25,7 +25,7 @@
                         <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ event.title }}</td>
                         <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ event.startDate }}</td>
                         <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{{ event.endDate }}</td>
-                        <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{% if event.archived is false %}Oui{% else %}Non{% endif %}</td>
+                        <td class="py-4 px-6 whitespace-nowrap text-sm text-gray-500">{% if event.archived == 0 %}Oui{% else %}Non{% endif %}</td>
                         <td class="py-4 px-6 whitespace-nowrap text-right text-sm font-medium">
                             <a href="{{ path('app_event_edit', { id: event.id }) }}" class="text-blue-600 hover:text-blue-900">Éditer</a>
                             <a href="{{ path('app_event_delete', { id: event.id }) }}" class="text-red-600 hover:text-red-900 ml-4">Supprimer</a>

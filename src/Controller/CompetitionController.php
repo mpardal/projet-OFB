@@ -3,32 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Competition;
-use App\Entity\Event;
-use App\Entity\ExhibitorGroup;
 use App\Form\CompetitionType;
-use App\Form\EventType;
-use App\Form\ExhibitorGroupType;
-use App\Form\GroupNameVerificationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/event')]
+#[Route('/concours')]
 class CompetitionController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name:'app_competition_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $competitions = $this->entityManager->getRepository(Competition::class)->findAll();
+        $competitions = $entityManager->getRepository(Competition::class)->findAll();
 
         return $this->render('competition/index.html.twig', [
             'competitions' => $competitions
@@ -36,14 +24,13 @@ class CompetitionController extends AbstractController
     }
 
     #[Route('/creation', name:'app_competition_create')]
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
-        $form = $this->createForm(CompetitionType::class);
+        $competition = new Competition();
+        $form = $this->createForm(CompetitionType::class, $competition);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $competition = new Competition();
             $entityManager->persist($competition);
             $entityManager->flush();
 
@@ -57,15 +44,14 @@ class CompetitionController extends AbstractController
     }
 
     #[Route('/{id}/modification', name:'app_competition_edit')]
-    public function edit($id, Request $request): Response
+    public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $competition = $entityManager->getRepository(Competition::class)->findOneBy($id);
         $form = $this->createForm(CompetitionType::class, $competition);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'Le concours ' . $competition->getTitle() . ' a bien été modifié');
             return $this->redirectToRoute('app_competition_index');
@@ -77,9 +63,8 @@ class CompetitionController extends AbstractController
     }
 
     #[Route('/{id}/suppression', name:'app_competition_delete')]
-    public function delete($id): Response
+    public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $competition = $entityManager->getRepository(Competition::class)->findOneBy($id);
 
         $competition->setArchived(true);

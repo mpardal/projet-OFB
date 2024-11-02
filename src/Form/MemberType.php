@@ -3,12 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Competition;
+use App\Entity\Member;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 
 class MemberType extends AbstractType
@@ -18,12 +20,21 @@ class MemberType extends AbstractType
         $builder
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
+                'constraints' => [
+                    new Length(['max' => 255]),
+                ],
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
+                'constraints' => [
+                    new Length(['max' => 255]),
+                ],
             ])
-            ->add('function', TextType::class, [
+            ->add('fonction', TextType::class, [
                 'label' => 'Fonction',
+                'constraints' => [
+                    new Length(['max' => 255]),
+                ],
             ])
             ->add('image', FileType::class, [
                 'label' => 'Photo',
@@ -36,7 +47,7 @@ class MemberType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Competition::class,
+            'data_class' => Member::class,
         ]);
     }
 

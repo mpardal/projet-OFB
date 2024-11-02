@@ -10,36 +10,30 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/exhibitors_group')]
+#[Route('/groupe_exposition')]
 class ExhibitorGroupController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name:'app_exhibitor_group_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $exhibitorsGroup = $this->entityManager->getRepository(ExhibitorGroup::class)->findAll();
+        $exhibitorsGroup = $entityManager->getRepository(ExhibitorGroup::class)->findAll();
 
         return $this->render('exhibitorGroup/index.html.twig', [
             'exhibitorsGroup' => $exhibitorsGroup
         ]);
     }
 
-    #[Route('/{id}/pre_creation', name:'app_exhibitor_group_pre_create')]
-    public function preCreate(Request $request): Response
+    #[Route('/pre_creation', name:'app_exhibitor_group_pre_create')]
+    public function preCreate(Request $request, EntityManagerInterface $entityManager,
+                              SessionInterface $session): Response
     {
         $form = $this->createForm(GroupNameVerificationType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->entityManager;
 
             $exhibitorGroupExist = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy(
                 ['groupName' => $form->get('groupName')->getData()]
@@ -53,23 +47,20 @@ class ExhibitorGroupController extends AbstractController
             $exhibitorGroup = new ExhibitorGroup();
             $exhibitorGroup->setGroupName($form->get('groupName')->getData());
 
-            $entityManager->persist($exhibitorGroup);
-            $entityManager->flush();
+            $session->set('exhibitorGroup', $exhibitorGroup);
 
-            return $this->redirectToRoute('app_exhibitor_group_create', [
-                'id' => $exhibitorGroup->getId()
-            ]);
+            return $this->redirectToRoute('app_exhibitor_group_create');
         }
         return $this->render('exhibitorGroup/pre-create.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
-    #[Route('/{id}/creation', name:'app_exhibitor_group_create')]
-    public function create($id, Request $request): Response
+    #[Route('/creation', name:'app_exhibitor_group_create')]
+    public function create(Request $request, EntityManagerInterface $entityManager,
+                           SessionInterface $session): Response
     {
-        $entityManager = $this->entityManager;
-        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
+        $exhibitorGroup = $session->get('exhibitorGroup');
         $form = $this->createForm(ExhibitorGroupType::class, $exhibitorGroup);
         $form->handleRequest($request);
 
@@ -87,16 +78,15 @@ class ExhibitorGroupController extends AbstractController
     }
 
     #[Route('/{id}/modification', name:'app_exhibitor_group_edit')]
-    public function edit($id, Request $request): Response
+    public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
 
         $form = $this->createForm(ExhibitorGroupType::class, $exhibitorGroup);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'Le groupe ' . $exhibitorGroup->getGroupName() . ' a bien été modifié');
             return $this->redirectToRoute('app_exhibitor_group_index');
@@ -108,9 +98,8 @@ class ExhibitorGroupController extends AbstractController
     }
 
     #[Route('/{id}/suppression', name:'app_exhibitor_group_delete')]
-    public function delete($id): Response
+    public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
 
         $exhibitorGroup->setArchived(true);
@@ -123,9 +112,9 @@ class ExhibitorGroupController extends AbstractController
     }
 
     #[Route('/group-details/{id}', name: 'group_details', methods: ['GET'])]
-    public function groupDetails(int $id): JsonResponse
+    public function groupDetails(int $id, EntityManagerInterface $entityManager): JsonResponse
     {
-        $group = $this->entityManager->getRepository(ExhibitorGroup::class)->find($id);
+        $group = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
         $images = [];
         $video = null;
 

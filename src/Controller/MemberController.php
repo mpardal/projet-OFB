@@ -20,32 +20,24 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/membres_equipe')]
 class MemberController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name:'app_member_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $members = $this->entityManager->getRepository(Member::class)->findAll();
+        $members = $entityManager->getRepository(Member::class)->findAll();
 
         return $this->render('member/index.html.twig', [
-            '$member' => $members
+            'members' => $members
         ]);
     }
 
     #[Route('/creation', name:'app_member_create')]
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
-        $form = $this->createForm(MemberType::class);
+        $member = new Member();
+        $form = $this->createForm(MemberType::class, $member);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $member = new Member();
             $entityManager->persist($member);
             $entityManager->flush();
 
@@ -59,15 +51,14 @@ class MemberController extends AbstractController
     }
 
     #[Route('/{id}/modification', name:'app_member_edit')]
-    public function edit($id, Request $request): Response
+    public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $member = $entityManager->getRepository(Member::class)->findOneBy($id);
         $form = $this->createForm(MemberType::class, $member);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'Le membre ' . $member->getFullName() . ' a bien été modifié');
             return $this->redirectToRoute('app_member_index');
@@ -79,9 +70,8 @@ class MemberController extends AbstractController
     }
 
     #[Route('/{id}/suppression', name:'app_member_delete')]
-    public function delete($id): Response
+    public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $member = $entityManager->getRepository(Member::class)->findOneBy($id);
 
         $member->setArchived(true);

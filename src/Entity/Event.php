@@ -19,23 +19,25 @@ class Event
     public readonly int $id;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le titre ne peut pas être vide.')]
     public string $title;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide.')]
     public string $description;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide.')]
     #[Assert\Length(max: 255)]
     public string $address;
 
     #[ORM\Column(type: 'string', length: 5)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Le code postal ne peut pas être vide.')]
     #[Assert\Regex(pattern: '/^\d{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     public string $zipCode;
 
     #[ORM\Column(type: 'string', length: 100)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'La ville ne peut pas être vide.')]
     #[Assert\Length(max: 100)]
     public string $city;
 
@@ -48,8 +50,11 @@ class Event
     #[ORM\OneToMany(targetEntity: ExhibitorGroup::class, mappedBy: 'event')]
     private Collection $exhibitorGroups;
 
-    #[ORM\Column(type: 'integer')]
-    public int $weezEventId;
+    #[ORM\Column(type: 'text', nullable: true)]
+    public ?string $banner;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    public ?int $weezEventId;
 
     #[ORM\Column(type: 'boolean')]
     private bool $archived = false;
@@ -128,6 +133,54 @@ class Event
     public function setEndDate(\DateTimeInterface $endDate): Event
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): Event
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getZipCode(): string
+    {
+        return $this->zipCode;
+    }
+
+    public function setZipCode(string $zipCode): Event
+    {
+        $this->zipCode = $zipCode;
+
+        return $this;
+    }
+
+    public function getCity(): string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): Event
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(?string $banner): Event
+    {
+        $this->banner = $banner;
 
         return $this;
     }

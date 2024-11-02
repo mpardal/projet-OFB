@@ -7,6 +7,8 @@ namespace App\Form;
 use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,27 +25,21 @@ class EventType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'constraints' => [
-                    new NotBlank(),
                     new Length(['max' => 255]),
                 ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
-                'constraints' => [
-                    new NotBlank(),
-                ],
             ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse',
                 'constraints' => [
-                    new NotBlank(),
                     new Length(['max' => 255]),
                 ],
             ])
             ->add('zipCode', TextType::class, [
                 'label' => 'Code postal',
                 'constraints' => [
-                    new NotBlank(),
                     new Regex([
                         'pattern' => '/^\d{5}$/',
                         'message' => 'Le code postal doit être composé de 5 chiffres.',
@@ -53,27 +49,27 @@ class EventType extends AbstractType
             ->add('city', TextType::class, [
                 'label' => 'Ville',
                 'constraints' => [
-                    new NotBlank(),
                     new Length(['max' => 100]),
                 ],
             ])
             ->add('startDate', DateTimeType::class, [
                 'label' => 'Date de début',
                 'widget' => 'single_text',
-                'constraints' => [
-                    new NotBlank(),
-                ],
             ])
             ->add('endDate', DateTimeType::class, [
                 'label' => 'Date de fin',
                 'widget' => 'single_text',
-                'constraints' => [
-                    new NotBlank(),
-                ],
             ])
             ->add('weezEventId', TextareaType::class, [
                 'label' => 'référence de l\événement sur weezEvent',
                 'required' => false,
+            ])
+            ->add('banner', FileType::class, [
+                'label' => 'référence de l\événement sur weezEvent',
+                'required' => false,
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Enregistrer',
             ]);
     }
 

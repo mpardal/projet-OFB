@@ -18,9 +18,11 @@ class ExhibitorGroup
     public readonly int $id;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom de groupe ne peut pas être vide.')]
     public string $groupName;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide.')]
     public string $description;
 
     #[ORM\Column(type: 'text', length: 255, nullable: true)]

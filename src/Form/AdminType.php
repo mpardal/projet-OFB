@@ -18,6 +18,7 @@ class AdminType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $admin = $options['data'];
         $builder
             ->add('lastname', TextType::class, [
                 'label' => 'Nom de famille',
@@ -27,13 +28,23 @@ class AdminType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
+                'required' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\Length([
+                        'min' => 8,
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères.',
+                    ]),
+                ],
+                'attr' => [
+                    'placeholder' => 'Laisser vide pour conserver le mot de passe actuel',
+                ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Email(),
-                    new UniqueEmail(), // Contrainte personnalisée pour vérifier l'unicité
                 ],
             ])
             ->add('submit', SubmitType::class, [

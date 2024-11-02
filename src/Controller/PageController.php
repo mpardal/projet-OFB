@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Competition;
 use App\Entity\Event;
+use App\Entity\Exercise;
 use App\Entity\Exhibitor;
 use App\Entity\ExhibitorGroup;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,13 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PageController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/concept', name: 'app_page_concept')]
     public function concept(): Response
     {
@@ -26,9 +21,9 @@ class PageController extends AbstractController
     }
 
     #[Route('/presentation_exposants', name: 'app_page_exhibitor_group')]
-    public function exhibitorGroup(): Response
+    public function exhibitorGroup(EntityManagerInterface $entityManager): Response
     {
-        $exhibitorsGroup = $this->entityManager->getRepository(ExhibitorGroup::class)->findAll();
+        $exhibitorsGroup = $entityManager->getRepository(ExhibitorGroup::class)->findAll();
 
         return $this->render('pages/exhibitors.html.twig',[
             'exhibitorsGroup' => $exhibitorsGroup
@@ -36,9 +31,9 @@ class PageController extends AbstractController
     }
 
     #[Route('/exposant/{group_name}', name: 'group_show', methods: ['GET'])]
-    public function showExhibitorGroup(int $groupName): Response
+    public function showExhibitorGroup(int $groupName, EntityManagerInterface $entityManager): Response
     {
-        $exhibitorGroup = $this->entityManager->getRepository(ExhibitorGroup::class)->findOneBy(
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy(
             [
                 'groupName' => $groupName
             ]
@@ -68,15 +63,23 @@ class PageController extends AbstractController
     }
 
     #[Route('/cours_et_seances', name: 'app_page_exercise')]
-    public function exercise(): Response
+    public function exercise(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('pages/exercise.html.twig');
+        $exercises = $entityManager->getRepository(Exercise::class)->findAll();
+
+        return $this->render('pages/exercise.html.twig',[
+            'exercises' => $exercises
+        ]);
     }
 
     #[Route('/concours_ludiques', name: 'app_page_competition')]
-    public function competition(): Response
+    public function competition(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('pages/competition.html.twig');
+        $competitions = $entityManager->getRepository(Competition::class)->findAll();
+
+        return $this->render('pages/competition.html.twig',[
+            'competitions' => $competitions
+        ]);
     }
 
     #[Route('/presentation_equipe', name: 'app_page_team')]
@@ -86,9 +89,9 @@ class PageController extends AbstractController
     }
 
     #[Route('/billetterie', name: 'app_page_ticket_office')]
-    public function ticketOffice(): Response
+    public function ticketOffice(EntityManagerInterface $entityManager): Response
     {
-        $events = $this->entityManager->getRepository(Event::class)->findBy(
+        $events = $entityManager->getRepository(Event::class)->findBy(
             [
                 'archived' => false
             ]

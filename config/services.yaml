@@ -16,7 +16,8 @@ services:
         autoconfigure: true
     App\Validator\UniqueEmailValidator:
         arguments:
-            $userRepository: '@ExhibitorRepository'
+            $adminRepository: '@App\Repository\AdminRepository'
+            $exhibitorRepository: '@App\Repository\ExhibitorRepository'
         tags:
             - { name: validator.constraint_validator, alias: app_unique_email_validator }
 

@@ -5,19 +5,23 @@
 {% block body %}
     {% for competition in competitions %}
         {% if loop.index is odd %}
-            <!-- Texte à gauche, image à droite -->
-            <div class="row">
-                <div class="col-left">{{ competition.title }}</div>
-                <div class="col-left">{{ competition.description }}</div>
-                <div class="col-right"><img src="{{ competition.image }}" alt="Image"></div>
-            </div>
+            <section class="flex items-center justify-between gap-4 my-4">
+                <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
+                    <div class="col-left">{{ competition.title }}</div>
+                    <div class="col-left">{{ competition.text }}</div>
+                </article>
+                <img src="{{ asset('uploads/salon-fitness.jpg') }}" alt="salon" class="w-1/2 h-auto object-cover rounded-lg">
+            </section>
         {% else %}
-            <!-- Image à gauche, texte à droite -->
-            <div class="row">
-                <div class="col-left"><img src="{{ competition.image }}" alt="Image"></div>
-                <div class="col-right">{{ competition.title }}</div>
-                <div class="col-right">{{ competition.description }}</div>
-            </div>
+            <section class="flex items-center justify-between gap-4 my-4">
+                <img src="{{ asset('uploads/cours1.jpg') }}" alt="cours" class="w-1/2 h-auto object-cover rounded-lg">
+                <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
+                    <div class="col-left">{{ competition.title }}</div>
+                    <div class="col-left">{{ competition.text }}</div>
+                </article>
+            </section>
         {% endif %}
+        {% else %}
+            <p class="text-gray-500">Aucun concours disponible pour le moment.</p>
     {% endfor %}
 {% endblock %}

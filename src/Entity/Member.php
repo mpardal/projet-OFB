@@ -18,13 +18,16 @@ class Member
     public readonly int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Le prénom ne peut pas être vide.')]
     private string $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Le nom ne peut pas être vide.')]
     private string $lastName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $function;
+    #[Assert\NotBlank(message: 'La fonction ne peut pas être vide.')]
+    private string $fonction;
 
     #[ORM\Column(type: 'boolean')]
     private bool $archived = false;
@@ -66,14 +69,14 @@ class Member
         return $this->firstName . ' ' . $this->lastName;
     }
 
-    public function getFunction(): string
+    public function getFonction(): string
     {
-        return $this->function;
+        return $this->fonction;
     }
 
-    public function setFunction(string $function): self
+    public function setFonction(string $fonction): self
     {
-        $this->function = $function;
+        $this->fonction = $fonction;
 
         return $this;
     }

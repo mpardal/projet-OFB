@@ -9,7 +9,7 @@
 
             {% if error %}
                 <div class="text-red-600 text-center mb-4">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                    Erreur d'authentification
                 </div>
             {% endif %}
 
@@ -34,9 +34,9 @@
                 </div>
             </form>
 
-            <div class="text-center mt-4">
+            {#<div class="text-center mt-4">
                 <a href="{{ path('register') }}" class="text-indigo-600 hover:text-indigo-500 text-sm">Pas encore de compte ? Inscrivez-vous</a>
-            </div>
+            </div>#}
         </div>
     </div>
 {% endblock %}

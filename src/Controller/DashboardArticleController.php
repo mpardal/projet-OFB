@@ -13,17 +13,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/article_accueil')]
 class DashboardArticleController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name:'app_dashboard_article_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $articles = $this->entityManager->getRepository(DashboardArticle::class)->findAll();
+        $articles = $entityManager->getRepository(DashboardArticle::class)->findAll();
 
         return $this->render('dashboardArticle/index.html.twig', [
             'articles' => $articles
@@ -31,14 +24,13 @@ class DashboardArticleController extends AbstractController
     }
 
     #[Route('/creation', name:'app_dashboard_article_create')]
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
-        $form = $this->createForm(DashboardArticleType::class);
+        $article = new DashboardArticle();
+        $form = $this->createForm(DashboardArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $article = new DashboardArticle();
             $entityManager->persist($article);
             $entityManager->flush();
 
@@ -52,15 +44,14 @@ class DashboardArticleController extends AbstractController
     }
 
     #[Route('/{id}/modification', name:'app_dashboard_article_edit')]
-    public function edit($id, Request $request): Response
+    public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $article = $entityManager->getRepository(DashboardArticle::class)->findOneBy($id);
         $form = $this->createForm(DashboardArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'L\'article ' . $article->getTitle() . ' a bien été modifié');
             return $this->redirectToRoute('app_dashboard_article_index');
@@ -72,9 +63,8 @@ class DashboardArticleController extends AbstractController
     }
 
     #[Route('/{id}/suppression', name:'app_dashboard_article_delete')]
-    public function delete($id): Response
+    public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $article = $entityManager->getRepository(DashboardArticle::class)->findOneBy($id);
 
         $article->setArchived(true);

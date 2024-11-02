@@ -35,7 +35,6 @@ class ExhibitorType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Email(),
-                    new UniqueEmail(), // Contrainte personnalisée pour vérifier l'unicité
                 ],
             ])
             ->add('exhibitorGroup', EntityType::class, [

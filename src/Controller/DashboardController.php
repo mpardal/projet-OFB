@@ -11,17 +11,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name: 'home_public')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $articles = $this->entityManager->getRepository(DashboardArticle::class)->findBy(
+        $articles = $entityManager->getRepository(DashboardArticle::class)->findBy(
             ['archived' => false],
             ['id' => 'DESC']
         );
@@ -32,10 +25,11 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/home-private', name: 'home_private')]
-    //#[IsGranted('ROLE_ADMIN or ROLE_EXHIBITOR')] // Autorise les utilisateurs ayant l'un des deux rôles
     public function homePrivate(): Response
     {
-        //$this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_EXHIBITOR']);
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('home_public');
+        }
 
         return $this->render('pages/dashboard_private.html.twig');
     }

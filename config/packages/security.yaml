@@ -2,36 +2,57 @@
 
 security:
     password_hashers:
-        App\Entity\User:
+        App\Entity\Admin:
+            algorithm: auto
+        App\Entity\Exhibitor:
             algorithm: auto
 
     providers:
-        app_user_provider:
+        admin_admin_provider:
             entity:
-                class: App\Entity\User
+                class: App\Entity\Admin
+                property: email
+        app_exhibitor_provider:
+            entity:
+                class: App\Entity\Exhibitor
                 property: email
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
-        main:
-            lazy: true
-            provider: app_user_provider
+        admin:
+            provider: admin_admin_provider
             form_login:
                 login_path: login
                 check_path: login
-                default_target_path: home_private # Redirige après la connexion
+                default_target_path: home_private
             logout:
                 path: logout
-                target: home_public # Redirige après la déconnexion
+                target: home_public
+        main:
+            lazy: true
+            provider: app_exhibitor_provider
+            form_login:
+                login_path: login
+                check_path: login
+                default_target_path: app_exhibitor_group_by_exhibitor_edit
+            logout:
+                path: logout
+                target: home_public
 
     role_hierarchy:
         ROLE_ADMIN: [ ROLE_EXHIBITOR ]
 
     access_control:
-       # - { path: ^/admin, roles: ROLE_ADMIN }
-       # - { path: ^/exhibitors, roles: ROLE_ADMIN }
-       # - { path: ^/home-private, roles: [ROLE_ADMIN, ROLE_EXHIBITOR] }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/exhibitors, roles: ROLE_ADMIN }
+        - { path: ^/concours/, roles: ROLE_ADMIN }
+        - { path: ^/article_accueil, roles: ROLE_ADMIN }
+        - { path: ^/evenements, roles: ROLE_ADMIN }
+        - { path: ^/cours_et_seances_management, roles: ROLE_ADMIN }
+        - { path: ^/groupe_exposition, roles: ROLE_ADMIN }
+        - { path: ^/membres_equipe, roles: ROLE_ADMIN }
+        - { path: ^/home-private, roles: [ROLE_ADMIN, ROLE_EXHIBITOR] }
+        - { path: ^/expositions, roles: [ROLE_EXHIBITOR] }
         - { path: ^/profile, roles: ROLE_ADMIN }

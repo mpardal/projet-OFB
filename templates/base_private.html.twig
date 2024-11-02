@@ -41,20 +41,36 @@
 
             <!-- Menu principal -->
             <ul id="menu" class="hidden lg:flex lg:space-x-2 flex-col lg:flex-row space-y-2 lg:space-y-0 absolute lg:static top-16 left-0 w-full lg:w-auto bg-white lg:bg-transparent p-4 lg:p-0 shadow lg:shadow-none z-50">
+
+                <!-- Groupe 1 : Users & groupes -->
+                <li class="relative group">
+                    <a href="#" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
+                        Gestion utilisateurs et groupes
+                    </a>
+                    <ul class="absolute hidden group-hover:block space-y-2 mt-2 lg:mt-0 bg-white p-4 shadow-lg rounded z-10">
+                        <li><a href="{{ path('app_admin_index') }}" class="text-gray-800 hover:text-blue-600">Gestion des administrateurs</a></li>
+                        <li><a href="{{ path('app_exhibitors_index') }}" class="text-gray-800 hover:text-blue-600">Gestion des exposants</a></li>
+                        <li><a href="{{ path('app_exhibitor_group_index') }}" class="text-gray-800 hover:text-blue-600">Gestion des groupes d'exposants</a></li>
+                        <li><a href="{{ path('app_member_index') }}" class="text-gray-800 hover:text-blue-600">Gestion de l'équipe</a></li>
+                    </ul>
+                </li>
+
                 <li>
-                    <a href="{{ path('app_admin_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Gestion des administrateurs
+                    <a href="{{ path('app_event_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
+                        Gestion des événements
                     </a>
                 </li>
-                <li>
-                    <a href="{{ path('app_exhibitors_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Gestion des exposants
+
+                <!-- Groupe 2 : Articles -->
+                <li class="relative group">
+                    <a href="#" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
+                        Gestion des articles
                     </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_exhibitor_group_index') }}" class="text-gray-800 hover:text-blue-600 py-2 px-4 rounded inline-flex items-center font-semibold">
-                        Gestion des groupes d'exposants
-                    </a>
+                    <ul class="absolute hidden group-hover:block space-y-2 mt-2 lg:mt-0 bg-white p-4 shadow-lg rounded z-10">
+                        <li><a href="{{ path('app_competition_index') }}" class="text-gray-800 hover:text-blue-600">Gestion des concours</a></li>
+                        <li><a href="{{ path('app_dashboard_article_index') }}" class="text-gray-800 hover:text-blue-600">Gestion des articles</a></li>
+                        <li><a href="{{ path('app_exercise_index') }}" class="text-gray-800 hover:text-blue-600">Gestion des cours/séances</a></li>
+                    </ul>
                 </li>
                 {% if app.user %}
                     <li>

@@ -16,9 +16,11 @@ class Exercise
     public readonly int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Le titre ne peut pas être vide.')]
     private string $title;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'La description ne peut pas être vide.')]
     private string $description;
 
     #[ORM\Column(type: 'boolean')]

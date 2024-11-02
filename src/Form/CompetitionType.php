@@ -19,7 +19,7 @@ class CompetitionType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre de la compétition',
             ])
-            ->add('texte', TextType::class, [
+            ->add('text', TextType::class, [
                 'label' => 'Texte de la compétition',
             ])
             ->add('image', FileType::class, [

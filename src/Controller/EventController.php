@@ -16,17 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/evenements')]
 class EventController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name:'app_event_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $events = $this->entityManager->getRepository(Event::class)->findAll();
+        $events = $entityManager->getRepository(Event::class)->findAll();
 
         return $this->render('event/index.html.twig', [
             'events' => $events
@@ -34,14 +27,13 @@ class EventController extends AbstractController
     }
 
     #[Route('/creation', name:'app_event_create')]
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
-        $form = $this->createForm(EventType::class);
+        $event = new Event();
+        $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $event = new Event();
 
             $entityManager->persist($event);
             $entityManager->flush();
@@ -56,15 +48,14 @@ class EventController extends AbstractController
     }
 
     #[Route('/{id}/modification', name:'app_event_edit')]
-    public function edit($id, Request $request): Response
+    public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $event = $entityManager->getRepository(Event::class)->find($id);
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'L\'événement ' . $event->getTitle() . ' a bien été modifié');
             return $this->redirectToRoute('app_event_index');
@@ -76,9 +67,8 @@ class EventController extends AbstractController
     }
 
     #[Route('/{id}/suppression', name:'app_event_delete')]
-    public function delete($id): Response
+    public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $event = $entityManager->getRepository(Event::class)->find($id);
 
         $event->setArchived(true);

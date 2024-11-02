@@ -16,9 +16,11 @@ class Competition
     public readonly int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Le titre ne peut pas être vide.')]
     private string $title;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'Le texte ne peut pas être vide.')]
     private string $text;
 
     #[ORM\Column(type: 'boolean')]

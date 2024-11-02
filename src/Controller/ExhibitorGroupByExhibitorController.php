@@ -13,17 +13,9 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/expositions')]
 class ExhibitorGroupByExhibitorController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/{id}/modification', name:'app_exhibitor_group_by_exhibitor_edit')]
-    public function edit(Request $request): Response
+    public function edit(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy(
             ['id' => $this->getUser()->getExhibitorGroup()]
         );
@@ -32,7 +24,7 @@ class ExhibitorGroupByExhibitorController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'Le stand ' . $exhibitorGroup->getGroupName() . ' a bien été modifié');
             return $this->redirectToRoute('app_exhibitor_group_index');

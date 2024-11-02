@@ -9,24 +9,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin')]
 class AdminController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/', name:'app_admin_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $admins = $this->entityManager->getRepository(Admin::class)->findBy(
+        $admins = $entityManager->getRepository(Admin::class)->findBy(
             [
-                'roles' => 'ROLE_ADMIN',
                 'archived' => false
             ],
             [
@@ -40,38 +34,46 @@ class AdminController extends AbstractController
     }
 
     #[Route('pre_creation', name:'app_admin_pre_create')]
-    public function preCreate(Request $request): Response
+    public function preCreate(Request $request, SessionInterface $session): Response
     {
         $form = $this->createForm(EmailVerificationType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->entityManager;
             $admin = new Admin();
             $admin->setEmail($form->get('email')->getData());
-            $admin->setRoles(['ROLE_ADMIN']);
 
-            $entityManager->persist($admin);
-            $entityManager->flush();
+            $session->set('admin', $admin);
 
-            return $this->redirectToRoute('app_admin_create', [
-                'id' => $admin->getId()
-            ]);
+            return $this->redirectToRoute('app_admin_create');
+
         }
         return $this->render('admin/pre-create.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
-    #[Route('/{id}/creation', name:'app_admin_create')]
-    public function create($id, Request $request): Response
+    #[Route('/creation', name:'app_admin_create')]
+    public function create(Request $request, SessionInterface $session,
+                           EntityManagerInterface $entityManager,
+                           UserPasswordHasherInterface $passwordHasher): Response
     {
-        $entityManager = $this->entityManager;
-        $admin = $entityManager->getRepository(Admin::class)->find($id);
+        $admin = $session->get('admin');
+
         $form = $this->createForm(AdminType::class, $admin);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $plainPassword = $form->get('password')->getData();
+
+            if ($plainPassword) {
+                // Si un nouveau mot de passe a été fourni, on le hash et on le met à jour
+                $hashedPassword = $passwordHasher->hashPassword($admin, $plainPassword);
+                $admin->setPassword($hashedPassword);
+            }
+
+            $entityManager->persist($admin);
             $entityManager->flush();
 
             $this->addFlash('success', 'L\'utilisateur ' . $admin->getFullName() . ' a bien été créé');
@@ -85,16 +87,26 @@ class AdminController extends AbstractController
     }
 
     #[Route('/{id}/modification', name:'app_admin_edit')]
-    public function edit($id, Request $request): Response
+    public function edit($id, Request $request, EntityManagerInterface $entityManager,
+                         UserPasswordHasherInterface $passwordHasher): Response
     {
-        $entityManager = $this->entityManager;
         $admin = $entityManager->getRepository(Admin::class)->find($id);
 
         $form = $this->createForm(AdminType::class, $admin);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+
+            $plainPassword = $form->get('password')->getData();
+
+            if ($plainPassword) {
+                // Si un nouveau mot de passe a été fourni, on le hash et on le met à jour
+                $hashedPassword = $passwordHasher->hashPassword($admin, $plainPassword);
+                $admin->setPassword($hashedPassword);
+            }
+            // Enregistrer les changements
+            $entityManager->persist($admin);
+            $entityManager->flush();
 
             $this->addFlash('success', 'L\'utilisateur ' . $admin->getFullName() . ' a bien été modifié');
             return $this->redirectToRoute('app_admin_index');
@@ -107,9 +119,8 @@ class AdminController extends AbstractController
     }
 
     #[Route('/{id}/suppression', name:'app_admin_delete')]
-    public function delete($id): Response
+    public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $entityManager = $this->entityManager;
         $admin = $entityManager->getRepository(Admin::class)->find($id);
 
         $admin->setArchived(true);
