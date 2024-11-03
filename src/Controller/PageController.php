@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Attachments;
 use App\Entity\Competition;
 use App\Entity\Event;
 use App\Entity\Exercise;
 use App\Entity\Exhibitor;
 use App\Entity\ExhibitorGroup;
+use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -83,9 +86,16 @@ class PageController extends AbstractController
     }
 
     #[Route('/presentation_equipe', name: 'app_page_team')]
-    public function team(): Response
+    public function team( EntityManagerInterface $entityManager): Response
     {
-        return $this->render('pages/team.html.twig');
+        $members = $entityManager->getRepository(Member::class)->findBy(
+            [
+                'archived' => false
+            ]
+        );
+        return $this->render('pages/team.html.twig', [
+            'members' => $members
+        ]);
     }
 
     #[Route('/billetterie', name: 'app_page_ticket_office')]
@@ -99,6 +109,38 @@ class PageController extends AbstractController
 
         return $this->render('pages/ticket_office.html.twig',[
             'events' => $events
+        ]);
+    }
+
+    #[Route('/groupe_exposants/{id}', name: 'app_exhibitor_group_details', methods: ['GET'])]
+    public function groupDetails(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy([
+            'id' => $id
+        ]);
+
+        $images = [];
+        $video = null;
+
+        $attachments = $entityManager->getRepository(Attachments::class)->findBy([
+            'exhibitorGroup' => $exhibitorGroup
+        ]);
+
+        foreach ($attachments as $attachment) {
+            if ($attachment->getType() === Attachments::IMAGES) {
+                $images[] = $attachment->getUrl();
+                //$images[] = $this->getParameter('uploads_directory') . '/' . $attachment->getFilePath();
+            } elseif ($attachment->getType() === Attachments::VIDEOS) {
+                $video = $attachment->getUrl();
+            }
+        }
+
+
+
+        return $this->render('pages/exhibitor_details.html.twig',[
+            'exhibitorGroup' => $exhibitorGroup,
+            'images' => $images,
+            'video' => $video,
         ]);
     }
 }

@@ -23,10 +23,27 @@ class MemberController extends AbstractController
     #[Route('/', name:'app_member_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $members = $entityManager->getRepository(Member::class)->findAll();
+        $members = $entityManager->getRepository(Member::class)->findBy(
+            [
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
+        $membersArchived = $entityManager->getRepository(Member::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
 
         return $this->render('member/index.html.twig', [
-            'members' => $members
+            'members' => $members,
+            'membersArchived' => $membersArchived
         ]);
     }
 
@@ -83,4 +100,17 @@ class MemberController extends AbstractController
         return $this->redirectToRoute('app_member_index');
     }
 
+    #[Route('/{id}/reactivation', name:'app_member_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $member = $entityManager->getRepository(Member::class)->findOneBy($id);
+
+        $member->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le membre ' . $member->getFullName() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_member_index');
+    }
 }

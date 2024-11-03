@@ -65,7 +65,7 @@ class EventType extends AbstractType
                 'required' => false,
             ])
             ->add('banner', FileType::class, [
-                'label' => 'référence de l\événement sur weezEvent',
+                'label' => 'Affiche de l\'événement',
                 'required' => false,
             ])
             ->add('submit', SubmitType::class, [

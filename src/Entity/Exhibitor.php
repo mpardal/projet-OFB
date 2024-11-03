@@ -50,8 +50,8 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $archived = false;
 
     #[ORM\ManyToOne(targetEntity: ExhibitorGroup::class, inversedBy: 'exhibitors')]
-    #[ORM\JoinColumn(nullable: false)]
-    public ExhibitorGroup $exhibitorGroup;
+    #[ORM\JoinColumn(nullable: true)]
+    public ?ExhibitorGroup $exhibitorGroup;
 
     public function getEmail(): string
     {
@@ -153,12 +153,12 @@ class Exhibitor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getExhibitorGroup(): ExhibitorGroup
+    public function getExhibitorGroup(): ?ExhibitorGroup
     {
         return $this->exhibitorGroup;
     }
 
-    public function setExhibitorGroup(ExhibitorGroup $exhibitorGroup): Exhibitor
+    public function setExhibitorGroup(?ExhibitorGroup $exhibitorGroup): self
     {
         $this->exhibitorGroup = $exhibitorGroup;
 

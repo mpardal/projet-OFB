@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\DashboardArticle;
+use App\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,13 +15,15 @@ class DashboardController extends AbstractController
     #[Route('/', name: 'home_public')]
     public function index(EntityManagerInterface $entityManager): Response
     {
+        $event = $entityManager->getRepository(Event::class)->findOneBy([],['id' => 'DESC']);
         $articles = $entityManager->getRepository(DashboardArticle::class)->findBy(
             ['archived' => false],
             ['id' => 'DESC']
         );
 
         return $this->render('Pages/dashboard.html.twig', [
-            'articles' => $articles
+            'articles' => $articles,
+            'event' => $event
         ]);
     }
 
@@ -31,7 +34,9 @@ class DashboardController extends AbstractController
             return $this->redirectToRoute('home_public');
         }
 
-        return $this->render('pages/dashboard_private.html.twig');
+        return $this->render('pages/dashboard_private.html.twig', [
+            'user' => $this->getUser()
+        ]);
     }
 
 }

@@ -37,11 +37,11 @@ class ExhibitorGroup
     public bool $archived = false;
 
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'exhibitorGroups')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Event $event = null;
 
     #[ORM\OneToMany(targetEntity: Exhibitor::class, mappedBy: 'exhibitorGroup')]
-    public iterable $exhibitors;  // Les exposants appartenant à ce groupe
+    public Collection $exhibitors;  // Les exposants appartenant à ce groupe
 
     #[ORM\OneToMany(targetEntity: Attachments::class, mappedBy: 'exhibitorGroup')]
     public iterable $attachments;  // Les utilisateurs (exposants) associés à ce groupe

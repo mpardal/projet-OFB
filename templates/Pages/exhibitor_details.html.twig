@@ -3,11 +3,17 @@
 {% block title %} - {{ exhibitorGroup.groupName }} - Détails{% endblock %}
 
 {% block body %}
+    <p class="text-blue-500 flex row gap-2 text-lg items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        <a href="{{ path('app_page_exhibitor_group') }}">Revenir aux exposants</a>
+    </p>
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h1 class="text-3xl font-bold mb-4">{{ exhibitorGroup.groupName }}</h1>
         <p class="text-gray-700 mb-4">{{ exhibitorGroup.description }}</p>
 
-        {% if group.website %}
+        {% if exhibitorGroup.website %}
             <p class="text-indigo-600"><a href="{{ exhibitorGroup.website }}" target="_blank" class="hover:underline">Visiter le site web</a></p>
         {% endif %}
 

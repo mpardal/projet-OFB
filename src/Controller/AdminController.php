@@ -28,8 +28,18 @@ class AdminController extends AbstractController
             ]
         );
 
+        $adminsArchived = $entityManager->getRepository(Admin::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
         return $this->render('admin/index.html.twig', [
-            'admins' => $admins
+            'admins' => $admins,
+            'adminsArchived' => $adminsArchived
         ]);
     }
 
@@ -128,6 +138,20 @@ class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('warning', 'L\'utilisateur ' . $admin->getFullName() . ' a bien été archivé');
+
+        return $this->redirectToRoute('app_admin_index');
+    }
+
+    #[Route('/{id}/reactivation', name:'app_admin_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $admin = $entityManager->getRepository(Admin::class)->findOneBy($id);
+
+        $admin->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'utilisateur ' . $admin->getFullName() . ' a bien été réactivé');
 
         return $this->redirectToRoute('app_admin_index');
     }

@@ -20,7 +20,9 @@ class ExhibitorGroupByExhibitorController extends AbstractController
             ['id' => $this->getUser()->getExhibitorGroup()]
         );
 
-        $form = $this->createForm(ExhibitorGroupByExhibitorType::class, $exhibitorGroup);
+        $form = $this->createForm(ExhibitorGroupByExhibitorType::class, $exhibitorGroup, [
+            'user' => $this->getUser(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

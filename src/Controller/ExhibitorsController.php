@@ -22,7 +22,6 @@ class ExhibitorsController extends AbstractController
     {
         $exhibitors = $entityManager->getRepository(Exhibitor::class)->findBy(
             [
-                'roles' => 'ROLE_EXHIBITOR',
                 'archived' => false
             ],
             [
@@ -30,8 +29,18 @@ class ExhibitorsController extends AbstractController
             ]
         );
 
+        $exhibitorsArchived = $entityManager->getRepository(Exhibitor::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
         return $this->render('exhibitor/index.html.twig', [
-            'exhibitors' => $exhibitors
+            'exhibitors' => $exhibitors,
+            'exhibitorsArchived' => $exhibitorsArchived
         ]);
     }
 
@@ -108,7 +117,8 @@ class ExhibitorsController extends AbstractController
             return $this->redirectToRoute('app_exhibitors_index');
         }
         return $this->render('exhibitor/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'exhibitor' => $exhibitor
         ]);
     }
 
@@ -127,4 +137,17 @@ class ExhibitorsController extends AbstractController
 
     }
 
+    #[Route('/{id}/reactivation', name:'app_exhibitors_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $exhibitor = $entityManager->getRepository(Exhibitor::class)->findOneBy($id);
+
+        $exhibitor->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'utilisateur ' . $exhibitor->getFullName() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_exhibitors_index');
+    }
 }

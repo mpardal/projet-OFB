@@ -2,15 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Competition;
-use App\Entity\Event;
+
 use App\Entity\Exercise;
-use App\Entity\ExhibitorGroup;
-use App\Form\CompetitionType;
-use App\Form\EventType;
 use App\Form\ExerciseType;
-use App\Form\ExhibitorGroupType;
-use App\Form\GroupNameVerificationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,10 +17,27 @@ class ExerciseController extends AbstractController
     #[Route('/', name:'app_exercise_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $exercises = $entityManager->getRepository(Exercise::class)->findAll();
+        $exercises = $entityManager->getRepository(Exercise::class)->findBy(
+            [
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
+        $exercisesArchived = $entityManager->getRepository(Exercise::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
 
         return $this->render('exercise/index.html.twig', [
-            'exercises' => $exercises
+            'exercises' => $exercises,
+            'exercisesArchived' => $exercisesArchived
         ]);
     }
 
@@ -78,9 +89,22 @@ class ExerciseController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash('warning', 'L\'événement ' . $exercise->getTitle() . ' a bien été archivé');
+        $this->addFlash('warning', 'Le cours ou la séance ' . $exercise->getTitle() . ' a bien été archivé');
 
         return $this->redirectToRoute('app_exercise_index');
     }
 
+    #[Route('/{id}/reactivation', name:'app_exercise_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $exercise = $entityManager->getRepository(Exercise::class)->findOneBy($id);
+
+        $exercise->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le cours ou la séance ' . $exercise->getTitle() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_exercise_index');
+    }
 }

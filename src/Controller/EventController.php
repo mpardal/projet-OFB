@@ -19,10 +19,27 @@ class EventController extends AbstractController
     #[Route('/', name:'app_event_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $events = $entityManager->getRepository(Event::class)->findAll();
+        $events = $entityManager->getRepository(Event::class)->findBy(
+            [
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
+        $eventsArchived = $entityManager->getRepository(Event::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
 
         return $this->render('event/index.html.twig', [
-            'events' => $events
+            'events' => $events,
+            'eventsArchived' => $eventsArchived
         ]);
     }
 
@@ -80,4 +97,17 @@ class EventController extends AbstractController
         return $this->redirectToRoute('app_event_index');
     }
 
+    #[Route('/{id}/reactivation', name:'app_event_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $event = $entityManager->getRepository(Event::class)->findOneBy($id);
+
+        $event->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'événement ' . $event->getTitle() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_event_index');
+    }
 }

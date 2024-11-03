@@ -3,7 +3,8 @@
 {% block title %} - Accueil{% endblock %}
 
 {% block body %}
-    <img src="{{ asset('uploads/OFB2025.jpg') }}" alt="image OFB" class="brightness-75">
+
+    <img src="{{ event.banner }}" alt="image OFB" class="brightness-75 mx-auto">
 
     {% for article in articles %}
         {% if loop.index is odd %}
@@ -12,11 +13,11 @@
                 <div class="col-left">{{ article.title }}</div>
                 <div class="col-left">{{ article.description }}</div>
             </article>
-            <img src="{{ asset('uploads/salon-fitness.jpg') }}" alt="salon" class="w-1/2 h-auto object-cover rounded-lg">
+            <img src="{{ article.image }}" alt="salon" class="w-1/2 h-auto object-cover rounded-lg">
             </section>
         {% else %}
             <section class="flex items-center justify-between gap-4 my-4">
-                <img src="{{ asset('uploads/cours1.jpg') }}" alt="cours" class="w-1/2 h-auto object-cover rounded-lg">
+                <img src="{{ article.image }}" alt="cours" class="w-1/2 h-auto object-cover rounded-lg">
                 <article class="p-4 border rounded-lg shadow-md bg-gray-100 w-full">
                     <div class="col-left">{{ article.title }}</div>
                     <div class="col-left">{{ article.description }}</div>

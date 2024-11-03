@@ -16,10 +16,27 @@ class DashboardArticleController extends AbstractController
     #[Route('/', name:'app_dashboard_article_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $articles = $entityManager->getRepository(DashboardArticle::class)->findAll();
+        $articles = $entityManager->getRepository(DashboardArticle::class)->findBy(
+            [
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
+        $articlesArchived = $entityManager->getRepository(DashboardArticle::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
 
         return $this->render('dashboardArticle/index.html.twig', [
-            'articles' => $articles
+            'articles' => $articles,
+            'articlesArchived' => $articlesArchived
         ]);
     }
 
@@ -76,4 +93,17 @@ class DashboardArticleController extends AbstractController
         return $this->redirectToRoute('app_dashboard_article_index');
     }
 
+    #[Route('/{id}/reactivation', name:'app_dashboard_article_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $article = $entityManager->getRepository(DashboardArticle::class)->findOneBy($id);
+
+        $article->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'article ' . $article->getTitle() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_dashboard_article_index');
+    }
 }

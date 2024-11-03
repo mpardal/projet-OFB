@@ -19,10 +19,27 @@ class ExhibitorGroupController extends AbstractController
     #[Route('/', name:'app_exhibitor_group_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $exhibitorsGroup = $entityManager->getRepository(ExhibitorGroup::class)->findAll();
+        $exhibitorsGroup = $entityManager->getRepository(ExhibitorGroup::class)->findBy(
+            [
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
+        $exhibitorsGroupArchived = $entityManager->getRepository(ExhibitorGroup::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
 
         return $this->render('exhibitorGroup/index.html.twig', [
-            'exhibitorsGroup' => $exhibitorsGroup
+            'exhibitorsGroup' => $exhibitorsGroup,
+            'exhibitorsGroupArchived' => $exhibitorsGroupArchived
         ]);
     }
 
@@ -77,7 +94,7 @@ class ExhibitorGroupController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/modification', name:'app_exhibitor_group_edit')]
+    #[Route('/modification/{id}', name:'app_exhibitor_group_edit')]
     public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
@@ -97,7 +114,7 @@ class ExhibitorGroupController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/suppression', name:'app_exhibitor_group_delete')]
+    #[Route('/suppression/{id}', name:'app_exhibitor_group_delete')]
     public function delete($id, EntityManagerInterface $entityManager): Response
     {
         $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
@@ -111,29 +128,17 @@ class ExhibitorGroupController extends AbstractController
         return $this->redirectToRoute('app_exhibitor_group_index');
     }
 
-    #[Route('/group-details/{id}', name: 'group_details', methods: ['GET'])]
-    public function groupDetails(int $id, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/{id}/reactivation', name:'app_exhibitor_group_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $group = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
-        $images = [];
-        $video = null;
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy($id);
 
-        foreach ($group->getAttachments() as $attachment) {
-            if ($attachment->getType() === 'image') {
-                $images[] = $this->getParameter('uploads_directory') . '/' . $attachment->getFilePath();
-            } elseif ($attachment->getType() === 'video') {
-                $video = $this->getParameter('uploads_directory') . '/' . $attachment->getFilePath();
-            }
-        }
+        $exhibitorGroup->setArchived(false);
 
-        return new JsonResponse([
-            'groupName' => $group->getGroupName(),
-            'description' => $group->getDescription(),
-            'website' => $group->getWebsite(),
-            'emailContact' => $group->getEmailContact(),
-            'images' => $images,
-            'video' => $video,
-        ]);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le groupe ' . $exhibitorGroup->getGroupName() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_exhibitor_group_index');
     }
-
 }

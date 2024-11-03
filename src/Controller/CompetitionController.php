@@ -16,10 +16,27 @@ class CompetitionController extends AbstractController
     #[Route('/', name:'app_competition_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $competitions = $entityManager->getRepository(Competition::class)->findAll();
+        $competitions = $entityManager->getRepository(Competition::class)->findBy(
+            [
+                'archived' => false
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
+
+        $competitionsArchived = $entityManager->getRepository(Competition::class)->findBy(
+            [
+                'archived' => true
+            ],
+            [
+                'lastName' => 'DESC'
+            ]
+        );
 
         return $this->render('competition/index.html.twig', [
-            'competitions' => $competitions
+            'competitions' => $competitions,
+            'competitionsArchived' => $competitionsArchived
         ]);
     }
 
@@ -76,4 +93,17 @@ class CompetitionController extends AbstractController
         return $this->redirectToRoute('app_competition_index');
     }
 
+    #[Route('/{id}/reactivation', name:'app_competition_reactivate')]
+    public function reActivate($id, EntityManagerInterface $entityManager): Response
+    {
+        $competition = $entityManager->getRepository(Competition::class)->findOneBy($id);
+
+        $competition->setArchived(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le concours ' . $competition->getTitle() . ' a bien été réactivé');
+
+        return $this->redirectToRoute('app_competition_index');
+    }
 }
