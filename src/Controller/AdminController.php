@@ -145,7 +145,7 @@ class AdminController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_admin_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $admin = $entityManager->getRepository(Admin::class)->findOneBy($id);
+        $admin = $entityManager->getRepository(Admin::class)->find($id);
 
         $admin->setArchived(false);
 

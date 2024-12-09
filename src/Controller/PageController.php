@@ -115,9 +115,7 @@ class PageController extends AbstractController
     #[Route('/groupe_exposants/{id}', name: 'app_exhibitor_group_details', methods: ['GET'])]
     public function groupDetails(int $id, EntityManagerInterface $entityManager): Response
     {
-        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy([
-            'id' => $id
-        ]);
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
 
         $images = [];
         $video = null;

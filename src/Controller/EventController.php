@@ -24,7 +24,7 @@ class EventController extends AbstractController
                 'archived' => false
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -33,7 +33,7 @@ class EventController extends AbstractController
                 'archived' => true
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -100,7 +100,7 @@ class EventController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_event_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $event = $entityManager->getRepository(Event::class)->findOneBy($id);
+        $event = $entityManager->getRepository(Event::class)->find($id);
 
         $event->setArchived(false);
 

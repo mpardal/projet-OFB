@@ -24,7 +24,7 @@ class ExhibitorGroupController extends AbstractController
                 'archived' => false
             ],
             [
-                'lastName' => 'DESC'
+                'groupName' => 'DESC'
             ]
         );
 
@@ -33,7 +33,7 @@ class ExhibitorGroupController extends AbstractController
                 'archived' => true
             ],
             [
-                'lastName' => 'DESC'
+                'groupName' => 'DESC'
             ]
         );
 
@@ -131,7 +131,7 @@ class ExhibitorGroupController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_exhibitor_group_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->findOneBy($id);
+        $exhibitorGroup = $entityManager->getRepository(ExhibitorGroup::class)->find($id);
 
         $exhibitorGroup->setArchived(false);
 

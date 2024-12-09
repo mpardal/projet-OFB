@@ -21,7 +21,7 @@ class DashboardArticleController extends AbstractController
                 'archived' => false
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -30,7 +30,7 @@ class DashboardArticleController extends AbstractController
                 'archived' => true
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -63,7 +63,7 @@ class DashboardArticleController extends AbstractController
     #[Route('/{id}/modification', name:'app_dashboard_article_edit')]
     public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $article = $entityManager->getRepository(DashboardArticle::class)->findOneBy($id);
+        $article = $entityManager->getRepository(DashboardArticle::class)->find($id);
         $form = $this->createForm(DashboardArticleType::class, $article);
         $form->handleRequest($request);
 
@@ -82,7 +82,7 @@ class DashboardArticleController extends AbstractController
     #[Route('/{id}/suppression', name:'app_dashboard_article_delete')]
     public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $article = $entityManager->getRepository(DashboardArticle::class)->findOneBy($id);
+        $article = $entityManager->getRepository(DashboardArticle::class)->find($id);
 
         $article->setArchived(true);
 
@@ -96,7 +96,7 @@ class DashboardArticleController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_dashboard_article_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $article = $entityManager->getRepository(DashboardArticle::class)->findOneBy($id);
+        $article = $entityManager->getRepository(DashboardArticle::class)->find($id);
 
         $article->setArchived(false);
 

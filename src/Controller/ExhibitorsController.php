@@ -140,7 +140,7 @@ class ExhibitorsController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_exhibitors_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $exhibitor = $entityManager->getRepository(Exhibitor::class)->findOneBy($id);
+        $exhibitor = $entityManager->getRepository(Exhibitor::class)->find($id);
 
         $exhibitor->setArchived(false);
 

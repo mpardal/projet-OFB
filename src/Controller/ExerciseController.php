@@ -22,7 +22,7 @@ class ExerciseController extends AbstractController
                 'archived' => false
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -31,7 +31,7 @@ class ExerciseController extends AbstractController
                 'archived' => true
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -64,7 +64,7 @@ class ExerciseController extends AbstractController
     #[Route('/{id}/modification', name:'app_exercise_edit')]
     public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $exercise = $entityManager->getRepository(Exercise::class)->findOneBy($id);
+        $exercise = $entityManager->getRepository(Exercise::class)->find($id);
         $form = $this->createForm(ExerciseType::class, $exercise);
         $form->handleRequest($request);
 
@@ -83,7 +83,7 @@ class ExerciseController extends AbstractController
     #[Route('/{id}/suppression', name:'app_exercise_delete')]
     public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $exercise = $entityManager->getRepository(Exercise::class)->findOneBy($id);
+        $exercise = $entityManager->getRepository(Exercise::class)->find($id);
 
         $exercise->setArchived(true);
 
@@ -97,7 +97,7 @@ class ExerciseController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_exercise_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $exercise = $entityManager->getRepository(Exercise::class)->findOneBy($id);
+        $exercise = $entityManager->getRepository(Exercise::class)->find($id);
 
         $exercise->setArchived(false);
 

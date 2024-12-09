@@ -70,7 +70,7 @@ class MemberController extends AbstractController
     #[Route('/{id}/modification', name:'app_member_edit')]
     public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $member = $entityManager->getRepository(Member::class)->findOneBy($id);
+        $member = $entityManager->getRepository(Member::class)->find($id);
         $form = $this->createForm(MemberType::class, $member);
         $form->handleRequest($request);
 
@@ -89,7 +89,7 @@ class MemberController extends AbstractController
     #[Route('/{id}/suppression', name:'app_member_delete')]
     public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $member = $entityManager->getRepository(Member::class)->findOneBy($id);
+        $member = $entityManager->getRepository(Member::class)->find($id);
 
         $member->setArchived(true);
 
@@ -103,7 +103,7 @@ class MemberController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_member_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $member = $entityManager->getRepository(Member::class)->findOneBy($id);
+        $member = $entityManager->getRepository(Member::class)->find($id);
 
         $member->setArchived(false);
 

@@ -21,7 +21,7 @@ class CompetitionController extends AbstractController
                 'archived' => false
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -30,7 +30,7 @@ class CompetitionController extends AbstractController
                 'archived' => true
             ],
             [
-                'lastName' => 'DESC'
+                'title' => 'DESC'
             ]
         );
 
@@ -63,7 +63,7 @@ class CompetitionController extends AbstractController
     #[Route('/{id}/modification', name:'app_competition_edit')]
     public function edit($id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $competition = $entityManager->getRepository(Competition::class)->findOneBy($id);
+        $competition = $entityManager->getRepository(Competition::class)->find($id);
         $form = $this->createForm(CompetitionType::class, $competition);
         $form->handleRequest($request);
 
@@ -82,7 +82,7 @@ class CompetitionController extends AbstractController
     #[Route('/{id}/suppression', name:'app_competition_delete')]
     public function delete($id, EntityManagerInterface $entityManager): Response
     {
-        $competition = $entityManager->getRepository(Competition::class)->findOneBy($id);
+        $competition = $entityManager->getRepository(Competition::class)->find($id);
 
         $competition->setArchived(true);
 
@@ -96,7 +96,7 @@ class CompetitionController extends AbstractController
     #[Route('/{id}/reactivation', name:'app_competition_reactivate')]
     public function reActivate($id, EntityManagerInterface $entityManager): Response
     {
-        $competition = $entityManager->getRepository(Competition::class)->findOneBy($id);
+        $competition = $entityManager->getRepository(Competition::class)->find($id);
 
         $competition->setArchived(false);
 
